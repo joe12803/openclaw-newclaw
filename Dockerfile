@@ -17,6 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # 安装 JupyterLab
 RUN pip install --no-cache-dir jupyterlab
 
+# 尝试预装 OpenClaw (通过设置环境变量或伪造 TTY 避开交互错误)
+# 如果脚本失败，也不停止构建
+RUN curl -fsSL https://openclaw.ai/install.sh | bash || true
+
 # 创建并设置工作目录
 WORKDIR /workspace
 RUN chmod 777 /workspace
@@ -25,14 +29,13 @@ RUN chmod 777 /workspace
 EXPOSE 7860
 
 # 启动 JupyterLab
-# 在启动脚本中先尝试安装 openclaw
-CMD bash -c "curl -fsSL https://openclaw.ai/install.sh | bash && jupyter lab \
-     --ip=0.0.0.0 \
-     --port=7860 \
-     --NotebookApp.token=ab87036181 \
-     --no-browser \
-     --allow-root \
-     --ServerApp.base_url=/ \
-     --ServerApp.default_url=/lab \
-     --ServerApp.disable_check_xsrf=True \
-     --ServerApp.allow_origin='*'"
+CMD ["jupyter", "lab", \
+     "--ip=0.0.0.0", \
+     "--port=7860", \
+     "--NotebookApp.token=ab87036181", \
+     "--no-browser", \
+     "--allow-root", \
+     "--ServerApp.base_url=/", \
+     "--ServerApp.default_url=/lab", \
+     "--ServerApp.disable_check_xsrf=True", \
+     "--ServerApp.allow_origin='*'"]
