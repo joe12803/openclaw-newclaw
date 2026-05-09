@@ -41,27 +41,36 @@ jobs:
           curl -fsSL https://openclaw.ai/install.sh | bash || echo "Installation finished with expected TTY warning"
 
       - name: Start JupyterLab and Tunnel
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # 1. 以后台模式启动容器，并把当前仓库挂载到 /workspace
+          # 1. 启动容器
+          echo "Starting Docker container..."
           docker run -d -p 7860:7860 \
             --name jupyter-container \
-            -e GITHUB_TOKEN=${GH_TOKEN} \
-            -v $(pwd):/workspace \
-            jupyterlab-image:latest
+            -v "$(pwd)":/workspace \
+            jupyterlab-image:latest || { echo "Docker run failed!"; exit 1; }
 
-          # 2. 安装 Cloudflare Tunnel 客户端
+          # 2. 安装 Cloudflare Tunnel
+          echo "Installing cloudflared..."
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
           sudo dpkg -i cloudflared.deb
 
-          # 3. 启动隧道并获取 URL (后台运行)
+          # 3. 启动隧道并获取 URL
           echo "Starting Cloudflare Tunnel..."
           cloudflared tunnel --url http://localhost:7860 > tunnel.log 2>&1 &
 
-          # 4. 等待几秒让隧道建立，并从日志中提取 URL
-          sleep 10
-          TUNNEL_URL=$(grep -oE "https://[a-zA-Z0-9-]+\.trycloudflare\.com" tunnel.log | head -n 1)
+          # 4. 轮询获取 URL
+          for i in {1..15}; do
+            sleep 2
+            TUNNEL_URL=$(grep -oE "https://[a-zA-Z0-9-]+\.trycloudflare\.com" tunnel.log | head -n 1)
+            if [ ! -z "$TUNNEL_URL" ]; then break; fi
+            echo "Waiting for tunnel URL... ($i/15)"
+          done
+
+          if [ -z "$TUNNEL_URL" ]; then
+            echo "Failed to get Tunnel URL!"
+            cat tunnel.log
+            exit 1
+          fi
 
           echo "---------------------------------------------------"
           echo "JupyterLab is now live!"
@@ -69,6 +78,6 @@ jobs:
           echo "Token: ab87036181"
           echo "---------------------------------------------------"
 
-          # 保持这个步骤运行一段时间，以便你操作（GitHub Action 默认限时，这里演示设置等待 30 分钟）
-          echo "The tunnel will remain active for 30 minutes. Close the action to stop."
-          sleep 1800
+          # 保持运行 1 小时 (3600秒)
+          echo "The tunnel will remain active for 1 hour."
+          sleep 3600
