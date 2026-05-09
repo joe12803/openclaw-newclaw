@@ -3,11 +3,10 @@
     "defaults": {
       "workspace": "/root/.openclaw/workspace",
       "model": {
-        "primary": "cli-api/ds-v4-pro"
+        "primary": "cli-api/gemini-3-flash"
       },
       "models": {
-        "cli-api/gemini-3-flash": {},
-        "cli-api/ds-v4-pro": {}
+        "cli-api/gemini-3-flash": {}
       }
     }
   },
@@ -51,8 +50,7 @@
       }
     },
     "exec": {
-      "security": "full",
-      "ask": "off"
+      "security": "full"
     }
   },
   "models": {
@@ -79,14 +77,6 @@
               "cacheWrite": 0
             },
             "reasoning": false
-          },
-          {
-            "id": "ds-v4-pro",
-            "name": "DeepSeek V4 Pro",
-            "contextWindow": 1000000,
-            "maxTokens": 8192,
-            "input": ["text"],
-            "reasoning": true
           }
         ]
       }
@@ -127,7 +117,7 @@
   },
   "meta": {
     "lastTouchedVersion": "2026.5.7",
-    "lastTouchedAt": "2026-05-09T20:10:48.149Z"
+    "lastTouchedAt": "2026-05-09T20:10:46.060Z"
   },
   "commands": {
     "ownerAllowFrom": [
