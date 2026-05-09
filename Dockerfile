@@ -47,11 +47,16 @@ EXPOSE 7860
 # 启动脚本
 CMD bash -c " \
     export PATH=\"/root/.npm-global/bin:/home/runner/.npm-global/bin:\$PATH\"; \
-    # 启动后台自动同步脚本 (每10分钟同步一次)
+    # 建立配置文件的备份链接
+    mkdir -p ~/.openclaw /workspace/.openclaw_backup; \
+    # 如果备份已存在，则恢复它
+    cp -r /workspace/.openclaw_backup/* ~/.openclaw/ 2>/dev/null || true; \
+    # 启动后台自动同步脚本 (每10分钟同步一次，包含配置文件备份)
     (while true; do \
+        cp -r ~/.openclaw/* /workspace/.openclaw_backup/ 2>/dev/null || true; \
         if [ -d /workspace/.git ] && [[ \$(git -C /workspace status --porcelain) ]]; then \
-            echo 'Auto-syncing changes to GitHub...'; \
-            git -C /workspace add . && git -C /workspace commit -m 'Auto-sync: update data and memory' && git -C /workspace push origin master:main || echo 'Sync failed'; \
+            echo 'Auto-syncing changes (including config) to GitHub...'; \
+            git -C /workspace add . && git -C /workspace commit -m 'Auto-sync: update data, memory and config' && git -C /workspace push origin master:main || echo 'Sync failed'; \
         fi; \
         sleep 600; \
     done) & \
