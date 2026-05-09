@@ -63,21 +63,28 @@ jobs:
           git config --global user.name "joe12803"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/joe12803/openclaw-newclaw.git"
 
-          echo "Starting auto-commit loop (every 5 minutes)..."
-          (
-            while true; do
-              sleep 300
-              echo "$(date): Checking for changes..."
-              git add -A
-              if git diff --cached --quiet; then
-                echo "No changes to commit."
-              else
-                git commit -m "Auto-sync memory at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-                git push origin HEAD:main --force
-                echo "Pushed successfully."
-              fi
-            done
-          ) &
+          # 创建自动同步脚本（基于原来的 while 循环逻辑）
+          cat > /tmp/openclaw_loop_sync.sh << 'EOF'
+          #!/bin/bash
+          # 自动同步脚本：每5分钟检查并推送变更
+          while true; do
+            sleep 300
+            echo "$(date): Checking for changes..."
+            git add -A
+            if git diff --cached --quiet; then
+              echo "No changes to commit."
+            else
+              git commit -m "Auto-sync memory at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+              git push origin HEAD:main --force
+              echo "Pushed successfully."
+            fi
+          done
+          EOF
+
+          chmod +x /tmp/openclaw_loop_sync.sh
+
+          echo "Starting auto-commit loop (every 5 minutes) using openclaw_loop_sync.sh..."
+          /tmp/openclaw_loop_sync.sh &
 
           echo "Installing cloudflared..."
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
@@ -118,4 +125,5 @@ jobs:
             git push origin HEAD:main --force || echo "Final push failed (ok if nothing to push)"
           fi
 
+          # 停止后台循环脚本
           kill %1
