@@ -19,3 +19,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t jupyterlab-image:latest .
+
+      - name: Display Access Information
+        run: |
+          echo "---------------------------------------------------"
+          echo "JupyterLab Build Successful!"
+          echo "Access URL: http://localhost:7860/lab?token=ab87036181"
+          echo "Token: ab87036181"
+          echo "---------------------------------------------------"
