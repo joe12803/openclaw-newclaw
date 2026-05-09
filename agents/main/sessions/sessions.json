@@ -10,7 +10,7 @@
       "accountId": "default"
     },
     "sessionId": "dc4f48c2-5c4c-4761-a66b-6a4765d30cc3",
-    "updatedAt": 1778347450532,
+    "updatedAt": 1778356941105,
     "sessionStartedAt": 1778347433420,
     "deliveryContext": {
       "channel": "telegram",
@@ -20,7 +20,7 @@
     "lastChannel": "telegram",
     "lastTo": "telegram:5145338625",
     "lastAccountId": "default",
-    "lastInteractionAt": 1778347433849,
+    "lastInteractionAt": 1778356940453,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -57,16 +57,14 @@
       ],
       "version": 0
     },
-    "status": "done",
-    "startedAt": 1778347437611,
-    "endedAt": 1778347450241,
-    "runtimeMs": 12630,
+    "status": "running",
+    "startedAt": 1778356941105,
     "modelProvider": "cli-api",
     "model": "gemini-3-flash",
     "contextTokens": 1000000,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1778347437487,
+      "generatedAt": 1778356884113,
       "sessionId": "dc4f48c2-5c4c-4761-a66b-6a4765d30cc3",
       "sessionKey": "agent:main:telegram:direct:5145338625",
       "provider": "cli-api",
@@ -86,9 +84,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 29312,
-        "projectContextChars": 13681,
-        "nonProjectContextChars": 15631
+        "chars": 26183,
+        "projectContextChars": 11185,
+        "nonProjectContextChars": 14998
       },
       "injectedWorkspaceFiles": [
         {
@@ -119,16 +117,16 @@
           "name": "IDENTITY.md",
           "path": "/root/.openclaw/workspace/IDENTITY.md",
           "missing": false,
-          "rawChars": 693,
-          "injectedChars": 693,
+          "rawChars": 134,
+          "injectedChars": 134,
           "truncated": false
         },
         {
           "name": "USER.md",
           "path": "/root/.openclaw/workspace/USER.md",
           "missing": false,
-          "rawChars": 534,
-          "injectedChars": 534,
+          "rawChars": 150,
+          "injectedChars": 150,
           "truncated": false
         },
         {
@@ -142,9 +140,9 @@
         {
           "name": "BOOTSTRAP.md",
           "path": "/root/.openclaw/workspace/BOOTSTRAP.md",
-          "missing": false,
-          "rawChars": 1510,
-          "injectedChars": 1510,
+          "missing": true,
+          "rawChars": 0,
+          "injectedChars": 0,
           "truncated": false
         }
       ],
@@ -306,12 +304,307 @@
         ]
       }
     },
-    "inputTokens": 30033,
-    "outputTokens": 209,
+    "inputTokens": 37440,
+    "outputTokens": 1257,
     "cacheRead": 0,
     "cacheWrite": 0,
     "estimatedCostUsd": 0,
-    "totalTokens": 15272,
+    "totalTokens": 19297,
     "totalTokensFresh": true
+  },
+  "agent:main:main": {
+    "sessionId": "6b134fe3-af0a-4028-8ed2-4ffc890444db",
+    "updatedAt": 1778356911554,
+    "sessionStartedAt": 1778356908978,
+    "systemSent": true,
+    "abortedLastRun": false,
+    "chatType": "direct",
+    "sessionFile": "/root/.openclaw/agents/main/sessions/6b134fe3-af0a-4028-8ed2-4ffc890444db.jsonl",
+    "compactionCount": 0,
+    "totalTokens": 10366,
+    "inputTokens": 10366,
+    "outputTokens": 6,
+    "estimatedCostUsd": 0,
+    "contextTokens": 1000000,
+    "skillsSnapshot": {
+      "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>browser-automation</name>\n    <description>Use when controlling web pages with the OpenClaw browser tool, especially multi-step flows, login checks, tab management, or recovery from stale refs/timeouts.</description>\n    <location>~/.openclaw/plugin-skills/browser-automation/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Audit and harden hosts running OpenClaw for SSH, firewall, updates, exposure, cron checks, and risk posture.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/healthcheck/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/node-connect/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Create, edit, improve, tidy, review, audit, or restructure AgentSkills and SKILL.md files.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/skill-creator/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow</name>\n    <description>Coordinate multi-step detached tasks as one durable TaskFlow job with owner context, state, waits, and child tasks.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/taskflow/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow-inbox-triage</name>\n    <description>Example TaskFlow pattern for inbox triage, intent routing, waiting on replies, and later summaries.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/taskflow-inbox-triage/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tavily</name>\n    <description>Tavily web search, content extraction, and research tools.</description>\n    <location>~/.openclaw/plugin-skills/tavily/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather, rain, temperature, and forecasts for locations or travel planning.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/weather/SKILL.md</location>\n  </skill>\n</available_skills>",
+      "skills": [
+        {
+          "name": "browser-automation"
+        },
+        {
+          "name": "healthcheck"
+        },
+        {
+          "name": "node-connect"
+        },
+        {
+          "name": "skill-creator"
+        },
+        {
+          "name": "taskflow"
+        },
+        {
+          "name": "taskflow-inbox-triage"
+        },
+        {
+          "name": "tavily",
+          "requiredEnv": []
+        },
+        {
+          "name": "weather",
+          "requiredEnv": []
+        }
+      ],
+      "version": 0
+    },
+    "status": "done",
+    "startedAt": 1778356909763,
+    "endedAt": 1778356911426,
+    "runtimeMs": 1663,
+    "modelProvider": "cli-api",
+    "model": "gemini-3-flash",
+    "systemPromptReport": {
+      "source": "run",
+      "generatedAt": 1778356909677,
+      "sessionId": "6b134fe3-af0a-4028-8ed2-4ffc890444db",
+      "sessionKey": "agent:main:main",
+      "provider": "cli-api",
+      "model": "gemini-3-flash",
+      "workspaceDir": "/root/.openclaw/workspace",
+      "bootstrapMaxChars": 12000,
+      "bootstrapTotalMaxChars": 60000,
+      "bootstrapTruncation": {
+        "warningMode": "once",
+        "warningShown": false,
+        "truncatedFiles": 0,
+        "nearLimitFiles": 0,
+        "totalNearLimit": false
+      },
+      "sandbox": {
+        "mode": "off",
+        "sandboxed": false
+      },
+      "systemPrompt": {
+        "chars": 25381,
+        "projectContextChars": 11185,
+        "nonProjectContextChars": 14196
+      },
+      "injectedWorkspaceFiles": [
+        {
+          "name": "AGENTS.md",
+          "path": "/root/.openclaw/workspace/AGENTS.md",
+          "missing": false,
+          "rawChars": 7774,
+          "injectedChars": 7774,
+          "truncated": false
+        },
+        {
+          "name": "SOUL.md",
+          "path": "/root/.openclaw/workspace/SOUL.md",
+          "missing": false,
+          "rawChars": 1797,
+          "injectedChars": 1797,
+          "truncated": false
+        },
+        {
+          "name": "TOOLS.md",
+          "path": "/root/.openclaw/workspace/TOOLS.md",
+          "missing": false,
+          "rawChars": 910,
+          "injectedChars": 910,
+          "truncated": false
+        },
+        {
+          "name": "IDENTITY.md",
+          "path": "/root/.openclaw/workspace/IDENTITY.md",
+          "missing": false,
+          "rawChars": 134,
+          "injectedChars": 134,
+          "truncated": false
+        },
+        {
+          "name": "USER.md",
+          "path": "/root/.openclaw/workspace/USER.md",
+          "missing": false,
+          "rawChars": 150,
+          "injectedChars": 150,
+          "truncated": false
+        },
+        {
+          "name": "HEARTBEAT.md",
+          "path": "/root/.openclaw/workspace/HEARTBEAT.md",
+          "missing": false,
+          "rawChars": 225,
+          "injectedChars": 225,
+          "truncated": false
+        },
+        {
+          "name": "BOOTSTRAP.md",
+          "path": "/root/.openclaw/workspace/BOOTSTRAP.md",
+          "missing": true,
+          "rawChars": 0,
+          "injectedChars": 0,
+          "truncated": false
+        }
+      ],
+      "skills": {
+        "promptChars": 2509,
+        "entries": [
+          {
+            "name": "browser-automation",
+            "blockChars": 324
+          },
+          {
+            "name": "healthcheck",
+            "blockChars": 271
+          },
+          {
+            "name": "node-connect",
+            "blockChars": 272
+          },
+          {
+            "name": "skill-creator",
+            "blockChars": 257
+          },
+          {
+            "name": "taskflow",
+            "blockChars": 272
+          },
+          {
+            "name": "taskflow-inbox-triage",
+            "blockChars": 282
+          },
+          {
+            "name": "tavily",
+            "blockChars": 199
+          },
+          {
+            "name": "weather",
+            "blockChars": 242
+          }
+        ]
+      },
+      "tools": {
+        "listChars": 0,
+        "schemaChars": 8882,
+        "entries": [
+          {
+            "name": "read",
+            "summaryChars": 298,
+            "schemaChars": 304,
+            "propertiesCount": 3
+          },
+          {
+            "name": "edit",
+            "summaryChars": 326,
+            "schemaChars": 834,
+            "propertiesCount": 2
+          },
+          {
+            "name": "write",
+            "summaryChars": 127,
+            "schemaChars": 225,
+            "propertiesCount": 2
+          },
+          {
+            "name": "exec",
+            "summaryChars": 446,
+            "schemaChars": 1139,
+            "propertiesCount": 12
+          },
+          {
+            "name": "process",
+            "summaryChars": 322,
+            "schemaChars": 1011,
+            "propertiesCount": 12
+          },
+          {
+            "name": "update_plan",
+            "summaryChars": 251,
+            "schemaChars": 574,
+            "propertiesCount": 2
+          },
+          {
+            "name": "sessions_list",
+            "summaryChars": 225,
+            "schemaChars": 432,
+            "propertiesCount": 9
+          },
+          {
+            "name": "sessions_history",
+            "summaryChars": 180,
+            "schemaChars": 161,
+            "propertiesCount": 3
+          },
+          {
+            "name": "sessions_send",
+            "summaryChars": 314,
+            "schemaChars": 274,
+            "propertiesCount": 5
+          },
+          {
+            "name": "sessions_spawn",
+            "summaryChars": 419,
+            "schemaChars": 1211,
+            "propertiesCount": 16
+          },
+          {
+            "name": "sessions_yield",
+            "summaryChars": 97,
+            "schemaChars": 60,
+            "propertiesCount": 1
+          },
+          {
+            "name": "subagents",
+            "summaryChars": 105,
+            "schemaChars": 191,
+            "propertiesCount": 4
+          },
+          {
+            "name": "session_status",
+            "summaryChars": 456,
+            "schemaChars": 89,
+            "propertiesCount": 2
+          },
+          {
+            "name": "web_search",
+            "summaryChars": 83,
+            "schemaChars": 1209,
+            "propertiesCount": 12
+          },
+          {
+            "name": "web_fetch",
+            "summaryChars": 129,
+            "schemaChars": 374,
+            "propertiesCount": 3
+          },
+          {
+            "name": "image",
+            "summaryChars": 260,
+            "schemaChars": 342,
+            "propertiesCount": 6
+          },
+          {
+            "name": "memory_search",
+            "summaryChars": 605,
+            "schemaChars": 237,
+            "propertiesCount": 4
+          },
+          {
+            "name": "memory_get",
+            "summaryChars": 239,
+            "schemaChars": 215,
+            "propertiesCount": 4
+          }
+        ]
+      }
+    },
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "totalTokensFresh": true,
+    "pendingFinalDelivery": true,
+    "pendingFinalDeliveryText": "HEARTBEAT_OK",
+    "pendingFinalDeliveryCreatedAt": 1778356911554
   }
 }
