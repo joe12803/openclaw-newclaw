@@ -48,11 +48,14 @@ EXPOSE 7860
 CMD bash -c " \
     if command -v openclaw > /dev/null; then \
         echo 'Configuring OpenClaw...'; \
+        # 强制创建配置目录，防止 missing 错误
+        mkdir -p ~/.openclaw; \
         openclaw config set api_base $OPENCLAW_API_BASE || true; \
         openclaw config set api_key $OPENCLAW_API_KEY || true; \
         openclaw config set model_id $OPENCLAW_MODEL_ID || true; \
-        echo 'Starting OpenClaw Gateway...'; \
-        openclaw gateway start --detach || openclaw gateway restart --detach || true; \
+        echo 'Starting OpenClaw Gateway in container mode...'; \
+        # 使用 nohup 直接运行网关进程，绕过 systemd
+        nohup openclaw gateway run > /tmp/gateway.log 2>&1 & \
         sleep 5; \
     fi && \
     jupyter lab \
