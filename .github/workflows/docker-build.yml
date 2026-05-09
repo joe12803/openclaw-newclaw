@@ -1,30 +1,33 @@
 name: Build, Deploy and Auto-Sync Memory
 
 on:
+  workflow_dispatch:          # 手动触发（任何时候你都可以直接启动）
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main                 # 推送 main 分支时也会触发，但我们会过滤自动同步提交
 
-# 确保有写入权限
+# 并发控制：同一时间只允许一个部署任务运行，新的触发会等待前一个完成
+concurrency:
+  group: deploy-container
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
 jobs:
   deploy:
+    # 如果是自动同步推送，跳过整个 job，不浪费运行分钟
+    if: ${{ !startsWith(github.event.head_commit.message, 'Auto-sync memory') }}
     runs-on: ubuntu-latest
     steps:
-      # 1. 拉取仓库（含记忆数据）
       - name: Checkout code (with memory)
         uses: actions/checkout@v4
         with:
-          persist-credentials: false   # 不使用默认 GITHUB_TOKEN
+          persist-credentials: false
 
-      # 2. 设置 Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 3. 缓存 OpenClaw（加速构建）
       - name: Cache OpenClaw
         uses: actions/cache@v4
         with:
@@ -33,7 +36,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-openclaw
 
-      # 4. 构建 Docker 镜像（如有 Dockerfile）
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
@@ -44,39 +46,35 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # 5. 安装 OpenClaw（可选，根据你的项目需要）
       - name: Install OpenClaw on Runner
         run: |
           curl -fsSL https://openclaw.ai/install.sh | bash || echo "OpenClaw install script finished (or skipped)"
 
-      # 6. 启动容器、隧道，并开启自动同步
       - name: Start JupyterLab, Tunnel and Auto-Sync
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}    # 你的 PAT，需有 repo 权限
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # ---------- 启动容器 ----------
           echo "Starting Docker container..."
           docker run -d -p 7860:7860 \
             --name jupyter-container \
             -v "$(pwd)":/root/.openclaw \
             jupyterlab-image:latest || { echo "Docker run failed!"; exit 1; }
 
-          # ---------- 配置 Git（宿主机） ----------
+          # 配置宿主机 Git
           git config --global user.email "joe12803@gmail.com"
           git config --global user.name "joe12803"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/joe12803/openclaw-newclaw.git"
 
-          # ---------- 启动自动推送后台任务 ----------
+          # 自动推送循环（只推送记忆相关文件，不推临时文件）
           echo "Starting auto-commit loop (every 5 minutes)..."
           (
             while true; do
-              sleep 300   # 5 分钟
+              sleep 300
               echo "$(date): Checking for memory changes..."
 
-              # 添加所有变更（重点是我们关心的文件/目录）
-              git add -A
+              # 只添加需要持久化的文件和目录（请按实际需求调整）
+              git add data/ memory/ config_backup/ openclaw.json AGENTS.md SOUL.md USER.md IDENTITY.md TOOLS.md HEARTBEAT.md Dockerfile backup.sh restore.sh skills/ 2>/dev/null || true
 
-              # 如果有变更则提交并推送
               if git diff --cached --quiet; then
                 echo "No changes to commit."
               else
@@ -85,14 +83,13 @@ jobs:
                 echo "Pushed successfully."
               fi
             done
-          ) &   # 放入后台
+          ) &
 
-          # ---------- 安装 Cloudflare Tunnel ----------
+          # 安装 cloudflared
           echo "Installing cloudflared..."
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
           sudo dpkg -i cloudflared.deb
 
-          # ---------- 启动隧道并获取 URL ----------
           echo "Starting Cloudflare Tunnel..."
           cloudflared tunnel --url http://localhost:7860 > tunnel.log 2>&1 &
           sleep 5
@@ -119,8 +116,17 @@ jobs:
           echo "Auto-sync is active – changes will be pushed to GitHub every 5 minutes."
           echo "---------------------------------------------------"
 
-          # ---------- 保持运行 1 小时 ----------
+          # 保持运行 1 小时
           sleep 3600
 
-          # 结束后清理后台任务（可选）
-          kill %1   # 停止自动推送循环
+          # 结束时最后同步一次，确保不丢数据
+          echo "Performing final sync..."
+          git add data/ memory/ config_backup/ openclaw.json AGENTS.md SOUL.md USER.md IDENTITY.md TOOLS.md HEARTBEAT.md Dockerfile backup.sh restore.sh skills/ 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No final changes to push."
+          else
+            git commit -m "Final sync at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            git push origin HEAD:main --force || echo "Final push failed (ok if nothing to push)"
+          fi
+
+          kill %1   # 停止后台自动推送循环
