@@ -47,6 +47,14 @@ EXPOSE 7860
 # 启动脚本
 CMD bash -c " \
     export PATH=\"/root/.npm-global/bin:/home/runner/.npm-global/bin:\$PATH\"; \
+    # 启动后台自动同步脚本 (每10分钟同步一次)
+    (while true; do \
+        if [ -d /workspace/.git ] && [[ \$(git -C /workspace status --porcelain) ]]; then \
+            echo 'Auto-syncing changes to GitHub...'; \
+            git -C /workspace add . && git -C /workspace commit -m 'Auto-sync: update data and memory' && git -C /workspace push origin master:main || echo 'Sync failed'; \
+        fi; \
+        sleep 600; \
+    done) & \
     if command -v openclaw > /dev/null; then \
         echo 'Configuring OpenClaw...'; \
         mkdir -p ~/.openclaw; \
