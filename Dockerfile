@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # 安装 JupyterLab
 RUN pip install --no-cache-dir jupyterlab
 
+# 安装 OpenClaw
+RUN curl -fsSL https://openclaw.ai/install.sh | bash
+
 # 创建并设置工作目录
 WORKDIR /workspace
 RUN chmod 777 /workspace

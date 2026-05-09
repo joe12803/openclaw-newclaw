@@ -20,6 +20,10 @@ jobs:
         run: |
           docker build -t jupyterlab-image:latest .
 
+      - name: Install OpenClaw on Runner (Optional)
+        run: |
+          curl -fsSL https://openclaw.ai/install.sh | bash
+
       - name: Start JupyterLab and Tunnel
         run: |
           # 1. 以后台模式启动容器
