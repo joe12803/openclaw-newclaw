@@ -47,27 +47,28 @@ EXPOSE 7860
 # 启动脚本
 CMD bash -c " \
     export PATH=\"/root/.npm-global/bin:/home/runner/.npm-global/bin:\$PATH\"; \
-    # 建立配置文件的备份链接
-    mkdir -p ~/.openclaw /workspace/.openclaw_backup; \
-    # 如果备份已存在，则恢复它
-    cp -r /workspace/.openclaw_backup/* ~/.openclaw/ 2>/dev/null || true; \
-    # 启动后台自动同步脚本 (每10分钟同步一次，包含配置文件备份)
+    # 建立配置和历史记录的备份链接
+    mkdir -p ~/.openclaw /workspace/.system_backup; \
+    # 恢复配置和命令历史
+    cp -r /workspace/.system_backup/.openclaw/* ~/.openclaw/ 2>/dev/null || true; \
+    cp /workspace/.system_backup/.bash_history ~/.bash_history 2>/dev/null || true; \
+    # 启动后台全量自动同步 (每 2 分钟一次)
     (while true; do \
-        cp -r ~/.openclaw/* /workspace/.openclaw_backup/ 2>/dev/null || true; \
+        mkdir -p /workspace/.system_backup/.openclaw; \
+        cp -r ~/.openclaw/* /workspace/.system_backup/.openclaw/ 2>/dev/null || true; \
+        cp ~/.bash_history /workspace/.system_backup/.bash_history 2>/dev/null || true; \
         if [ -d /workspace/.git ] && [[ \$(git -C /workspace status --porcelain) ]]; then \
-            echo 'Auto-syncing changes (including config) to GitHub...'; \
-            git -C /workspace add . && git -C /workspace commit -m 'Auto-sync: update data, memory and config' && git -C /workspace push origin master:main || echo 'Sync failed'; \
+            echo 'Pushing all changes to GitHub...'; \
+            git -C /workspace add . && git -C /workspace commit -m 'All-in-one sync: data, config, and history' && git -C /workspace push origin master:main || echo 'Push failed'; \
         fi; \
-        sleep 600; \
+        sleep 120; \
     done) & \
     if command -v openclaw > /dev/null; then \
         echo 'Configuring OpenClaw...'; \
-        mkdir -p ~/.openclaw; \
         openclaw config set api_base \$OPENCLAW_API_BASE || true; \
         openclaw config set api_key \$OPENCLAW_API_KEY || true; \
         openclaw config set model_id \$OPENCLAW_MODEL_ID || true; \
-        echo 'Starting OpenClaw Gateway (Force Run)...'; \
-        # 强制使用绝对路径或直接调用 run 避开 systemd 检查
+        echo 'Starting OpenClaw Gateway...'; \
         nohup openclaw gateway run > /tmp/gateway.log 2>&1 & \
         sleep 5; \
     fi && \
