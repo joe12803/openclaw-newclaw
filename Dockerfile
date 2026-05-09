@@ -44,14 +44,21 @@ RUN chmod 777 /workspace
 # 暴露端口
 EXPOSE 7860
 
-# 启动 JupyterLab
-CMD ["jupyter", "lab", \
-     "--ip=0.0.0.0", \
-     "--port=7860", \
-     "--NotebookApp.token=ab87036181", \
-     "--no-browser", \
-     "--allow-root", \
-     "--ServerApp.base_url=/", \
-     "--ServerApp.default_url=/lab", \
-     "--ServerApp.disable_check_xsrf=True", \
-     "--ServerApp.allow_origin='*'"]
+# 启动脚本
+CMD bash -c " \
+    if command -v openclaw > /dev/null; then \
+        echo 'Configuring OpenClaw...'; \
+        openclaw config set api_base $OPENCLAW_API_BASE || true; \
+        openclaw config set api_key $OPENCLAW_API_KEY || true; \
+        openclaw config set model_id $OPENCLAW_MODEL_ID || true; \
+    fi && \
+    jupyter lab \
+    --ip=0.0.0.0 \
+    --port=7860 \
+    --NotebookApp.token=ab87036181 \
+    --no-browser \
+    --allow-root \
+    --ServerApp.base_url=/ \
+    --ServerApp.default_url=/lab \
+    --ServerApp.disable_check_xsrf=True \
+    --ServerApp.allow_origin='*'"
