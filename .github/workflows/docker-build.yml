@@ -6,12 +6,19 @@ on:
       - main
   workflow_dispatch:
 
+# ★ 1. 显式声明写入权限，避免工作流因默认只读权限而无法推送
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # ★ 2. 禁止持久化默认 GITHUB_TOKEN，防止它干扰我们传入的 PAT
+          persist-credentials: false
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -37,37 +44,38 @@ jobs:
 
       - name: Install OpenClaw on Runner
         run: |
-          # 使用非交互模式安装（如果支持），或者简单安装
           curl -fsSL https://openclaw.ai/install.sh | bash || echo "Installation finished with expected TTY warning"
 
       - name: Start JupyterLab and Tunnel
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # 1. 启动容器
+          # 启动容器（这部分保持不变）
           echo "Starting Docker container..."
           docker run -d -p 7860:7860 \
             --name jupyter-container \
             -v "$(pwd)":/root/.openclaw/workspace \
             jupyterlab-image:latest || { echo "Docker run failed!"; exit 1; }
 
-          # 2. 在容器内部配置 Git 授权（确保能推送）
-          # 我们直接修改容器内的远程地址，注入宿主机的 Token
-          docker exec jupyter-container git remote set-url origin https://x-access-token:$GH_TOKEN@github.com/joe12803/openclaw-newclaw.git
+          # ★ 3. 在容器内配置 Git（增强版）
+          # 先清理可能残留的默认凭据
+          docker exec jupyter-container git config --global --unset-all credential.helper || true
           docker exec jupyter-container git config --global user.email "joe12803@gmail.com"
           docker exec jupyter-container git config --global user.name "joe12803"
           docker exec jupyter-container git config --global safe.directory '*'
 
-          # 3. 安装 Cloudflare Tunnel
+          # ★ 4. 使用 PAT 重写远程地址（注意仓库名请核对，不要有 typo）
+          docker exec jupyter-container git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/joe12803/openclaw-newclaw.git"
+
+          # 安装 cloudflared
           echo "Installing cloudflared..."
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
           sudo dpkg -i cloudflared.deb
 
-          # 3. 启动隧道并获取 URL
+          # 启动隧道并获取 URL
           echo "Starting Cloudflare Tunnel..."
           cloudflared tunnel --url http://localhost:7860 > tunnel.log 2>&1 &
 
-          # 4. 轮询获取 URL
           for i in {1..15}; do
             sleep 2
             TUNNEL_URL=$(grep -oE "https://[a-zA-Z0-9-]+\.trycloudflare\.com" tunnel.log | head -n 1)
@@ -87,6 +95,6 @@ jobs:
           echo "Token: ab87036181"
           echo "---------------------------------------------------"
 
-          # 保持运行 1 小时 (3600秒)
+          # 保持运行 1 小时
           echo "The tunnel will remain active for 1 hour."
           sleep 3600
