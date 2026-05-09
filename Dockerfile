@@ -46,15 +46,15 @@ EXPOSE 7860
 
 # 启动脚本
 CMD bash -c " \
+    export PATH=\"/root/.npm-global/bin:/home/runner/.npm-global/bin:\$PATH\"; \
     if command -v openclaw > /dev/null; then \
         echo 'Configuring OpenClaw...'; \
-        # 强制创建配置目录，防止 missing 错误
         mkdir -p ~/.openclaw; \
-        openclaw config set api_base $OPENCLAW_API_BASE || true; \
-        openclaw config set api_key $OPENCLAW_API_KEY || true; \
-        openclaw config set model_id $OPENCLAW_MODEL_ID || true; \
-        echo 'Starting OpenClaw Gateway in container mode...'; \
-        # 使用 nohup 直接运行网关进程，绕过 systemd
+        openclaw config set api_base \$OPENCLAW_API_BASE || true; \
+        openclaw config set api_key \$OPENCLAW_API_KEY || true; \
+        openclaw config set model_id \$OPENCLAW_MODEL_ID || true; \
+        echo 'Starting OpenClaw Gateway (Force Run)...'; \
+        # 强制使用绝对路径或直接调用 run 避开 systemd 检查
         nohup openclaw gateway run > /tmp/gateway.log 2>&1 & \
         sleep 5; \
     fi && \
