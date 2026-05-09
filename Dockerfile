@@ -34,8 +34,8 @@ RUN git config --global user.email "joe12803@gmail.com" && \
     git config --global user.name "joe12803" && \
     git config --global safe.directory /workspace
 
-# 创建记忆和技能目录
-RUN mkdir -p /workspace/memory /workspace/skills
+# 创建记忆、技能和配置备份目录
+RUN mkdir -p /workspace/memory /workspace/skills /workspace/config_backup
 
 # 创建并设置工作目录
 WORKDIR /workspace
@@ -48,26 +48,26 @@ EXPOSE 7860
 CMD bash -c " \
     export PATH=\"/root/.npm-global/bin:/home/runner/.npm-global/bin:\$PATH\"; \
     # 建立配置和历史记录的备份链接
-    mkdir -p ~/.openclaw /workspace/.system_backup; \
-    # 优先从仓库备份恢复
-    if [ -f /workspace/.system_backup/.openclaw/openclaw.json ]; then \
-        echo 'Restoring OpenClaw config from backup...'; \
-        cp -r /workspace/.system_backup/.openclaw/* ~/.openclaw/ 2>/dev/null || true; \
+    mkdir -p ~/.openclaw /workspace/config_backup; \
+    # 优先从仓库显式备份目录恢复
+    if [ -f /workspace/config_backup/openclaw.json ]; then \
+        echo 'Restoring OpenClaw config from repository...'; \
+        cp /workspace/config_backup/openclaw.json ~/.openclaw/openclaw.json; \
     else \
-        echo 'No backup found, initializing with environment variables...'; \
+        echo 'No backup found in repo, initializing...'; \
         openclaw config set api_base \$OPENCLAW_API_BASE || true; \
         openclaw config set api_key \$OPENCLAW_API_KEY || true; \
         openclaw config set model_id \$OPENCLAW_MODEL_ID || true; \
     fi; \
-    cp /workspace/.system_backup/.bash_history ~/.bash_history 2>/dev/null || true; \
-    # 启动后台全量自动同步 (每 2 分钟一次)
+    # 启动后台自动同步 (每 2 分钟一次)
     (while true; do \
-        mkdir -p /workspace/.system_backup/.openclaw; \
-        cp -r ~/.openclaw/* /workspace/.system_backup/.openclaw/ 2>/dev/null || true; \
-        cp ~/.bash_history /workspace/.system_backup/.bash_history 2>/dev/null || true; \
+        cp ~/.openclaw/openclaw.json /workspace/config_backup/ 2>/dev/null || true; \
+        cp ~/.bash_history /workspace/config_backup/bash_history.txt 2>/dev/null || true; \
         if [ -d /workspace/.git ] && [[ \$(git -C /workspace status --porcelain) ]]; then \
-            echo 'Pushing all changes to GitHub...'; \
-            git -C /workspace add . && git -C /workspace commit -m 'All-in-one sync: data, config, and history' && git -C /workspace push origin master:main || echo 'Push failed'; \
+            echo 'Syncing all data and config to GitHub...'; \
+            git -C /workspace add memory/ skills/ config_backup/ ; \
+            git -C /workspace commit -m 'Update memory and config backup' ; \
+            git -C /workspace push origin master:main || echo 'Push failed'; \
         fi; \
         sleep 120; \
     done) & \
