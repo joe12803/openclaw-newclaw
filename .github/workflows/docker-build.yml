@@ -1,14 +1,14 @@
 name: Build, Deploy and Auto-Sync Memory
 
 on:
-  workflow_dispatch:          # 手动触发
+  workflow_dispatch:
   push:
     branches:
-      - main                 # 推送 main 时也会触发，但自动同步提交会被过滤
+      - main
 
 concurrency:
   group: deploy-container
-  cancel-in-progress: false   # 同一时间只允许一个部署运行
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -59,18 +59,16 @@ jobs:
             -w /root/.openclaw \
             jupyterlab-image:latest || { echo "Docker run failed!"; exit 1; }
 
-          # 配置宿主机 Git
           git config --global user.email "joe12803@gmail.com"
           git config --global user.name "joe12803"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/joe12803/openclaw-newclaw.git"
 
-          # 启动自动推送后台任务（每5分钟检查记忆文件）
           echo "Starting auto-commit loop (every 5 minutes)..."
           (
             while true; do
               sleep 300
-              echo "$(date): Checking for memory changes..."
-              git add data/ memory/ config_backup/ openclaw.json AGENTS.md SOUL.md USER.md IDENTITY.md TOOLS.md HEARTBEAT.md Dockerfile backup.sh restore.sh skills/ 2>/dev/null || true
+              echo "$(date): Checking for changes..."
+              git add -A
               if git diff --cached --quiet; then
                 echo "No changes to commit."
               else
@@ -81,7 +79,6 @@ jobs:
             done
           ) &
 
-          # 安装 Cloudflare Tunnel
           echo "Installing cloudflared..."
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
           sudo dpkg -i cloudflared.deb
@@ -92,9 +89,7 @@ jobs:
 
           for i in $(seq 1 15); do
             TUNNEL_URL=$(grep -oE "https://[a-zA-Z0-9-]+\.trycloudflare\.com" tunnel.log | head -n 1)
-            if [ -n "$TUNNEL_URL" ]; then
-              break
-            fi
+            if [ -n "$TUNNEL_URL" ]; then break; fi
             echo "Waiting for tunnel URL... ($i/15)"
             sleep 2
           done
@@ -112,12 +107,10 @@ jobs:
           echo "Auto-sync is active – changes will be pushed to GitHub every 5 minutes."
           echo "---------------------------------------------------"
 
-          # 保持运行 1 小时
           sleep 3600
 
-          # 最终同步一次，确保数据不丢
           echo "Performing final sync..."
-          git add data/ memory/ config_backup/ openclaw.json AGENTS.md SOUL.md USER.md IDENTITY.md TOOLS.md HEARTBEAT.md Dockerfile backup.sh restore.sh skills/ 2>/dev/null || true
+          git add -A
           if git diff --cached --quiet; then
             echo "No final changes to push."
           else
@@ -125,4 +118,4 @@ jobs:
             git push origin HEAD:main --force || echo "Final push failed (ok if nothing to push)"
           fi
 
-          kill %1   # 停止后台自动推送
+          kill %1
