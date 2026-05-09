@@ -32,7 +32,7 @@ ENV OPENCLAW_API_BASE=https://openclaw.994938.xyz/v1 \
 # 设置 Git 身份
 RUN git config --global user.email "joe12803@gmail.com" && \
     git config --global user.name "joe12803" && \
-    git config --global safe.directory /root/.openclaw/workspace
+    git config --global safe.directory '*'
 
 # 创建记忆、技能和配置备份目录
 RUN mkdir -p /root/.openclaw/workspace/memory /root/.openclaw/workspace/skills /root/.openclaw/workspace/config_backup
@@ -63,11 +63,11 @@ CMD bash -c " \
     (while true; do \
         cp ~/.openclaw/openclaw.json /root/.openclaw/workspace/config_backup/ 2>/dev/null || true; \
         cp ~/.bash_history /root/.openclaw/workspace/config_backup/bash_history.txt 2>/dev/null || true; \
-        if [ -d /root/.openclaw/workspace/.git ] && [[ \$(git -C /root/.openclaw/workspace status --porcelain) ]]; then \
+        if [ -d /root/.openclaw/workspace/.git ]; then \
             echo 'Syncing all data and config to GitHub...'; \
-            git -C /root/.openclaw/workspace add memory/ skills/ config_backup/ ; \
-            git -C /root/.openclaw/workspace commit -m 'Update memory and config backup' ; \
-            git -C /root/.openclaw/workspace push origin master:main || echo 'Push failed'; \
+            git -C /root/.openclaw/workspace add . ; \
+            git -C /root/.openclaw/workspace commit -m 'Auto-sync: update data and config' ; \
+            git -C /root/.openclaw/workspace push origin HEAD:main || echo 'Push failed'; \
         fi; \
         sleep 120; \
     done) & \
