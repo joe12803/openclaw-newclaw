@@ -56,6 +56,7 @@ jobs:
           docker run -d -p 7860:7860 \
             --name jupyter-container \
             -v "$(pwd)":/root/.openclaw \
+            -w /root/.openclaw \
             jupyterlab-image:latest || { echo "Docker run failed!"; exit 1; }
 
           # 配置宿主机 Git
