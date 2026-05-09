@@ -1,0 +1,28 @@
+{
+  "providers": {
+    "cli-api": {
+      "baseUrl": "https://openclaw.994938.xyz/v1",
+      "api": "openai-completions",
+      "apiKey": "sk-KhbSk9pyLHkw8AzPy",
+      "models": [
+        {
+          "id": "gemini-3-flash",
+          "name": "gemini-3-flash (Custom Provider)",
+          "contextWindow": 1000000,
+          "maxTokens": 8192,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "reasoning": false
+        }
+      ]
+    }
+  }
+}
