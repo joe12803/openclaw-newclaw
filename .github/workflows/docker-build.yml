@@ -50,7 +50,7 @@ jobs:
           echo "Starting Docker container..."
           docker run -d -p 7860:7860 \
             --name jupyter-container \
-            -v "$(pwd)":/workspace \
+            -v "$(pwd)":/root/.openclaw/workspace \
             jupyterlab-image:latest || { echo "Docker run failed!"; exit 1; }
 
           # 2. 安装 Cloudflare Tunnel
