@@ -20,10 +20,29 @@ jobs:
         run: |
           docker build -t jupyterlab-image:latest .
 
-      - name: Display Access Information
+      - name: Start JupyterLab and Tunnel
         run: |
+          # 1. 以后台模式启动容器
+          docker run -d -p 7860:7860 --name jupyter-container jupyterlab-image:latest
+
+          # 2. 安装 Cloudflare Tunnel 客户端
+          curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i cloudflared.deb
+
+          # 3. 启动隧道并获取 URL (后台运行)
+          echo "Starting Cloudflare Tunnel..."
+          cloudflared tunnel --url http://localhost:7860 > tunnel.log 2>&1 &
+
+          # 4. 等待几秒让隧道建立，并从日志中提取 URL
+          sleep 10
+          TUNNEL_URL=$(grep -oE "https://[a-zA-Z0-9-]+\.trycloudflare\.com" tunnel.log | head -n 1)
+
           echo "---------------------------------------------------"
-          echo "JupyterLab Build Successful!"
-          echo "Access URL: http://localhost:7860/lab?token=ab87036181"
+          echo "JupyterLab is now live!"
+          echo "Public URL: ${TUNNEL_URL}/lab?token=ab87036181"
           echo "Token: ab87036181"
           echo "---------------------------------------------------"
+
+          # 保持这个步骤运行一段时间，以便你操作（GitHub Action 默认限时，这里演示设置等待 30 分钟）
+          echo "The tunnel will remain active for 30 minutes. Close the action to stop."
+          sleep 1800
