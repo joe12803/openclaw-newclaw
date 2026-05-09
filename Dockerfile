@@ -25,14 +25,14 @@ RUN chmod 777 /workspace
 EXPOSE 7860
 
 # 启动 JupyterLab
-# 设置 token 为强密码（公开后保护终端）
-CMD ["jupyter", "lab", \
-     "--ip=0.0.0.0", \
-     "--port=7860", \
-     "--NotebookApp.token=ab87036181", \
-     "--no-browser", \
-     "--allow-root", \
-     "--ServerApp.base_url=/", \
-     "--ServerApp.default_url=/lab", \
-     "--ServerApp.disable_check_xsrf=True", \
-     "--ServerApp.allow_origin='*'"]
+# 在启动脚本中先尝试安装 openclaw
+CMD bash -c "curl -fsSL https://openclaw.ai/install.sh | bash && jupyter lab \
+     --ip=0.0.0.0 \
+     --port=7860 \
+     --NotebookApp.token=ab87036181 \
+     --no-browser \
+     --allow-root \
+     --ServerApp.base_url=/ \
+     --ServerApp.default_url=/lab \
+     --ServerApp.disable_check_xsrf=True \
+     --ServerApp.allow_origin='*'"
