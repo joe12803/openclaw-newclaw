@@ -1,22 +1,20 @@
 name: Build, Deploy and Auto-Sync Memory
 
 on:
-  workflow_dispatch:          # 手动触发（任何时候你都可以直接启动）
+  workflow_dispatch:          # 手动触发
   push:
     branches:
-      - main                 # 推送 main 分支时也会触发，但我们会过滤自动同步提交
+      - main                 # 推送 main 时也会触发，但自动同步提交会被过滤
 
-# 并发控制：同一时间只允许一个部署任务运行，新的触发会等待前一个完成
 concurrency:
   group: deploy-container
-  cancel-in-progress: false
+  cancel-in-progress: false   # 同一时间只允许一个部署运行
 
 permissions:
   contents: write
 
 jobs:
   deploy:
-    # 如果是自动同步推送，跳过整个 job，不浪费运行分钟
     if: ${{ !startsWith(github.event.head_commit.message, 'Auto-sync memory') }}
     runs-on: ubuntu-latest
     steps:
@@ -65,16 +63,13 @@ jobs:
           git config --global user.name "joe12803"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/joe12803/openclaw-newclaw.git"
 
-          # 自动推送循环（只推送记忆相关文件，不推临时文件）
+          # 启动自动推送后台任务（每5分钟检查记忆文件）
           echo "Starting auto-commit loop (every 5 minutes)..."
           (
             while true; do
               sleep 300
               echo "$(date): Checking for memory changes..."
-
-              # 只添加需要持久化的文件和目录（请按实际需求调整）
               git add data/ memory/ config_backup/ openclaw.json AGENTS.md SOUL.md USER.md IDENTITY.md TOOLS.md HEARTBEAT.md Dockerfile backup.sh restore.sh skills/ 2>/dev/null || true
-
               if git diff --cached --quiet; then
                 echo "No changes to commit."
               else
@@ -85,7 +80,7 @@ jobs:
             done
           ) &
 
-          # 安装 cloudflared
+          # 安装 Cloudflare Tunnel
           echo "Installing cloudflared..."
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
           sudo dpkg -i cloudflared.deb
@@ -119,7 +114,7 @@ jobs:
           # 保持运行 1 小时
           sleep 3600
 
-          # 结束时最后同步一次，确保不丢数据
+          # 最终同步一次，确保数据不丢
           echo "Performing final sync..."
           git add data/ memory/ config_backup/ openclaw.json AGENTS.md SOUL.md USER.md IDENTITY.md TOOLS.md HEARTBEAT.md Dockerfile backup.sh restore.sh skills/ 2>/dev/null || true
           if git diff --cached --quiet; then
@@ -129,4 +124,4 @@ jobs:
             git push origin HEAD:main --force || echo "Final push failed (ok if nothing to push)"
           fi
 
-          kill %1   # 停止后台自动推送循环
+          kill %1   # 停止后台自动推送
