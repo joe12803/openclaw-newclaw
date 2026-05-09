@@ -49,8 +49,16 @@ CMD bash -c " \
     export PATH=\"/root/.npm-global/bin:/home/runner/.npm-global/bin:\$PATH\"; \
     # 建立配置和历史记录的备份链接
     mkdir -p ~/.openclaw /workspace/.system_backup; \
-    # 恢复配置和命令历史
-    cp -r /workspace/.system_backup/.openclaw/* ~/.openclaw/ 2>/dev/null || true; \
+    # 优先从仓库备份恢复
+    if [ -f /workspace/.system_backup/.openclaw/openclaw.json ]; then \
+        echo 'Restoring OpenClaw config from backup...'; \
+        cp -r /workspace/.system_backup/.openclaw/* ~/.openclaw/ 2>/dev/null || true; \
+    else \
+        echo 'No backup found, initializing with environment variables...'; \
+        openclaw config set api_base \$OPENCLAW_API_BASE || true; \
+        openclaw config set api_key \$OPENCLAW_API_KEY || true; \
+        openclaw config set model_id \$OPENCLAW_MODEL_ID || true; \
+    fi; \
     cp /workspace/.system_backup/.bash_history ~/.bash_history 2>/dev/null || true; \
     # 启动后台全量自动同步 (每 2 分钟一次)
     (while true; do \
@@ -64,10 +72,6 @@ CMD bash -c " \
         sleep 120; \
     done) & \
     if command -v openclaw > /dev/null; then \
-        echo 'Configuring OpenClaw...'; \
-        openclaw config set api_base \$OPENCLAW_API_BASE || true; \
-        openclaw config set api_key \$OPENCLAW_API_KEY || true; \
-        openclaw config set model_id \$OPENCLAW_MODEL_ID || true; \
         echo 'Starting OpenClaw Gateway...'; \
         nohup openclaw gateway run > /tmp/gateway.log 2>&1 & \
         sleep 5; \
