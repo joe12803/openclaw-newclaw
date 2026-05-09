@@ -41,9 +41,15 @@ jobs:
           curl -fsSL https://openclaw.ai/install.sh | bash || echo "Installation finished with expected TTY warning"
 
       - name: Start JupyterLab and Tunnel
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # 1. 以后台模式启动容器
-          docker run -d -p 7860:7860 --name jupyter-container jupyterlab-image:latest
+          # 1. 以后台模式启动容器，并把当前仓库挂载到 /workspace
+          docker run -d -p 7860:7860 \
+            --name jupyter-container \
+            -e GITHUB_TOKEN=${GH_TOKEN} \
+            -v $(pwd):/workspace \
+            jupyterlab-image:latest
 
           # 2. 安装 Cloudflare Tunnel 客户端
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb

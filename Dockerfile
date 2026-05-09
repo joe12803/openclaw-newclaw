@@ -29,6 +29,14 @@ ENV OPENCLAW_API_BASE=https://openclaw.994938.xyz/v1 \
     OPENCLAW_CLI_SECRET=ZNxDr96h2aktjNgZschT1gPk8KutnIHk \
     TELEGRAM_TOKEN=8681968864:AAHYMykz1T7_ykFu-75xg1-aTIFM3FOLq_M
 
+# 设置 Git 身份
+RUN git config --global user.email "joe12803@gmail.com" && \
+    git config --global user.name "joe12803" && \
+    git config --global safe.directory /workspace
+
+# 创建记忆和技能目录
+RUN mkdir -p /workspace/memory /workspace/skills
+
 # 创建并设置工作目录
 WORKDIR /workspace
 RUN chmod 777 /workspace
