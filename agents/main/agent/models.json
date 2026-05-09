@@ -21,6 +21,16 @@
             "cacheWrite": 0
           },
           "reasoning": false
+        },
+        {
+          "id": "ds-v4-pro",
+          "name": "DeepSeek V4 Pro",
+          "contextWindow": 1000000,
+          "maxTokens": 8192,
+          "input": [
+            "text"
+          ],
+          "reasoning": true
         }
       ]
     }

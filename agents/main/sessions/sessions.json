@@ -317,7 +317,7 @@
   },
   "agent:main:main": {
     "sessionId": "6b134fe3-af0a-4028-8ed2-4ffc890444db",
-    "updatedAt": 1778356911554,
+    "updatedAt": 1778360509019,
     "sessionStartedAt": 1778356908978,
     "systemSent": true,
     "abortedLastRun": false,
@@ -608,6 +608,9 @@
     "totalTokensFresh": true,
     "pendingFinalDelivery": true,
     "pendingFinalDeliveryText": "HEARTBEAT_OK",
-    "pendingFinalDeliveryCreatedAt": 1778356911554
+    "pendingFinalDeliveryCreatedAt": 1778356911554,
+    "pendingFinalDeliveryLastAttemptAt": 1778360509009,
+    "pendingFinalDeliveryAttemptCount": 1,
+    "pendingFinalDeliveryLastError": null
   }
 }
