@@ -9,9 +9,9 @@
       "to": "telegram:5145338625",
       "accountId": "default"
     },
-    "sessionId": "6653f9e0-859e-408b-b0cc-7f0b62901fa4",
-    "updatedAt": 1778357586031,
-    "sessionStartedAt": 1778357536092,
+    "sessionId": "306df476-7c6f-4fac-8cd6-5f5713b53a33",
+    "updatedAt": 1778357707248,
+    "sessionStartedAt": 1778357633219,
     "deliveryContext": {
       "channel": "telegram",
       "to": "telegram:5145338625",
@@ -20,19 +20,19 @@
     "lastChannel": "telegram",
     "lastTo": "telegram:5145338625",
     "lastAccountId": "default",
-    "lastInteractionAt": 1778357542047,
+    "lastInteractionAt": 1778357662674,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
-    "sessionFile": "/root/.openclaw/agents/main/sessions/6653f9e0-859e-408b-b0cc-7f0b62901fa4.jsonl",
+    "sessionFile": "/root/.openclaw/agents/main/sessions/306df476-7c6f-4fac-8cd6-5f5713b53a33.jsonl",
     "status": "done",
-    "startedAt": 1778357543610,
+    "startedAt": 1778357663325,
     "modelProvider": "cli-api",
     "model": "gemini-3-flash",
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1778357543532,
-      "sessionId": "6653f9e0-859e-408b-b0cc-7f0b62901fa4",
+      "generatedAt": 1778357663245,
+      "sessionId": "306df476-7c6f-4fac-8cd6-5f5713b53a33",
       "sessionKey": "agent:main:telegram:direct:5145338625",
       "provider": "cli-api",
       "model": "gemini-3-flash",
@@ -271,17 +271,12 @@
         ]
       }
     },
-    "cacheRead": 8126,
+    "cacheRead": 8121,
     "cacheWrite": 0,
     "totalTokensFresh": true,
     "compactionCount": 0,
-    "endedAt": 1778357585904,
-    "runtimeMs": 42294,
-    "contextTokens": 1000000,
-    "inputTokens": 99560,
-    "outputTokens": 811,
-    "estimatedCostUsd": 0,
-    "totalTokens": 20476,
+    "endedAt": 1778357707097,
+    "runtimeMs": 43772,
     "skillsSnapshot": {
       "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>browser-automation</name>\n    <description>Use when controlling web pages with the OpenClaw browser tool, especially multi-step flows, login checks, tab management, or recovery from stale refs/timeouts.</description>\n    <location>~/.openclaw/plugin-skills/browser-automation/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Audit and harden hosts running OpenClaw for SSH, firewall, updates, exposure, cron checks, and risk posture.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/healthcheck/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/node-connect/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Create, edit, improve, tidy, review, audit, or restructure AgentSkills and SKILL.md files.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/skill-creator/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow</name>\n    <description>Coordinate multi-step detached tasks as one durable TaskFlow job with owner context, state, waits, and child tasks.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/taskflow/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow-inbox-triage</name>\n    <description>Example TaskFlow pattern for inbox triage, intent routing, waiting on replies, and later summaries.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/taskflow-inbox-triage/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tavily</name>\n    <description>Tavily web search, content extraction, and research tools.</description>\n    <location>~/.openclaw/plugin-skills/tavily/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather, rain, temperature, and forecasts for locations or travel planning.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/weather/SKILL.md</location>\n  </skill>\n</available_skills>",
       "skills": [
@@ -313,7 +308,12 @@
         }
       ],
       "version": 0
-    }
+    },
+    "contextTokens": 1000000,
+    "inputTokens": 66438,
+    "outputTokens": 1920,
+    "estimatedCostUsd": 0,
+    "totalTokens": 17252
   },
   "agent:main:main": {
     "sessionId": "6b134fe3-af0a-4028-8ed2-4ffc890444db",
