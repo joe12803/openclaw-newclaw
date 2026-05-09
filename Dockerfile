@@ -51,6 +51,9 @@ CMD bash -c " \
         openclaw config set api_base $OPENCLAW_API_BASE || true; \
         openclaw config set api_key $OPENCLAW_API_KEY || true; \
         openclaw config set model_id $OPENCLAW_MODEL_ID || true; \
+        echo 'Starting OpenClaw Gateway...'; \
+        openclaw gateway start --detach || openclaw gateway restart --detach || true; \
+        sleep 5; \
     fi && \
     jupyter lab \
     --ip=0.0.0.0 \
