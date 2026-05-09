@@ -21,6 +21,14 @@ RUN pip install --no-cache-dir jupyterlab
 # 如果脚本失败，也不停止构建
 RUN curl -fsSL https://openclaw.ai/install.sh | bash || true
 
+# 设置 OpenClaw 配置环境变量
+ENV OPENCLAW_API_BASE=https://openclaw.994938.xyz/v1 \
+    OPENCLAW_MODEL_ID=gemini-3-flash \
+    OPENCLAW_API_KEY=sk-KhbSk9pyLHkw8AzPy \
+    OPENCLAW_CLI_ID=cli_a945168af2b95ccb \
+    OPENCLAW_CLI_SECRET=ZNxDr96h2aktjNgZschT1gPk8KutnIHk \
+    TELEGRAM_TOKEN=8681968864:AAHYMykz1T7_ykFu-75xg1-aTIFM3FOLq_M
+
 # 创建并设置工作目录
 WORKDIR /workspace
 RUN chmod 777 /workspace
