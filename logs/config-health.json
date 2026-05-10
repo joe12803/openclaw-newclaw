@@ -4,33 +4,33 @@
       "lastKnownGood": {
         "hash": "48694306717f3905ce778a60f952e9b4af050387103032aac126d30e3ad58995",
         "bytes": 2880,
-        "mtimeMs": 1778425804504.1116,
-        "ctimeMs": 1778425804504.1116,
+        "mtimeMs": 1778426958211.3333,
+        "ctimeMs": 1778426958211.3333,
         "dev": "2049",
-        "ino": "8651409",
+        "ino": "8662647",
         "mode": 33188,
         "nlink": 1,
         "uid": 1001,
         "gid": 1001,
         "hasMeta": true,
         "gatewayMode": "local",
-        "observedAt": "2026-05-10T15:12:17.295Z"
+        "observedAt": "2026-05-10T15:31:27.764Z"
       },
       "lastObservedSuspiciousSignature": null,
       "lastPromotedGood": {
         "hash": "48694306717f3905ce778a60f952e9b4af050387103032aac126d30e3ad58995",
         "bytes": 2880,
-        "mtimeMs": 1778425804504.1116,
-        "ctimeMs": 1778425804504.1116,
+        "mtimeMs": 1778426958211.3333,
+        "ctimeMs": 1778426958211.3333,
         "dev": "2049",
-        "ino": "8651409",
+        "ino": "8662647",
         "mode": 33188,
         "nlink": 1,
         "uid": 1001,
         "gid": 1001,
         "hasMeta": true,
         "gatewayMode": "local",
-        "observedAt": "2026-05-10T15:12:17.295Z"
+        "observedAt": "2026-05-10T15:31:27.764Z"
       }
     }
   }

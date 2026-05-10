@@ -9,9 +9,9 @@
       "to": "telegram:5145338625",
       "accountId": "default"
     },
-    "sessionId": "306df476-7c6f-4fac-8cd6-5f5713b53a33",
-    "updatedAt": 1778357707248,
-    "sessionStartedAt": 1778357633219,
+    "sessionId": "323dfb59-60c8-4c49-943c-c4042d9e4946",
+    "updatedAt": 1778428603516,
+    "sessionStartedAt": 1778428326576,
     "deliveryContext": {
       "channel": "telegram",
       "to": "telegram:5145338625",
@@ -20,22 +20,22 @@
     "lastChannel": "telegram",
     "lastTo": "telegram:5145338625",
     "lastAccountId": "default",
-    "lastInteractionAt": 1778357662674,
+    "lastInteractionAt": 1778428524618,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
-    "sessionFile": "/root/.openclaw/agents/main/sessions/306df476-7c6f-4fac-8cd6-5f5713b53a33.jsonl",
-    "status": "done",
-    "startedAt": 1778357663325,
+    "sessionFile": "/root/.openclaw/agents/main/sessions/323dfb59-60c8-4c49-943c-c4042d9e4946.jsonl",
+    "status": "running",
+    "startedAt": 1778428603516,
     "modelProvider": "cli-api",
-    "model": "gemini-3-flash",
+    "model": "ds-v4-pro",
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1778357663245,
-      "sessionId": "306df476-7c6f-4fac-8cd6-5f5713b53a33",
+      "generatedAt": 1778428421854,
+      "sessionId": "323dfb59-60c8-4c49-943c-c4042d9e4946",
       "sessionKey": "agent:main:telegram:direct:5145338625",
       "provider": "cli-api",
-      "model": "gemini-3-flash",
+      "model": "ds-v4-pro",
       "workspaceDir": "/root/.openclaw/workspace",
       "bootstrapMaxChars": 12000,
       "bootstrapTotalMaxChars": 60000,
@@ -51,9 +51,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 26183,
-        "projectContextChars": 11185,
-        "nonProjectContextChars": 14998
+        "chars": 29247,
+        "projectContextChars": 13681,
+        "nonProjectContextChars": 15566
       },
       "injectedWorkspaceFiles": [
         {
@@ -84,16 +84,16 @@
           "name": "IDENTITY.md",
           "path": "/root/.openclaw/workspace/IDENTITY.md",
           "missing": false,
-          "rawChars": 134,
-          "injectedChars": 134,
+          "rawChars": 693,
+          "injectedChars": 693,
           "truncated": false
         },
         {
           "name": "USER.md",
           "path": "/root/.openclaw/workspace/USER.md",
           "missing": false,
-          "rawChars": 150,
-          "injectedChars": 150,
+          "rawChars": 534,
+          "injectedChars": 534,
           "truncated": false
         },
         {
@@ -107,9 +107,9 @@
         {
           "name": "BOOTSTRAP.md",
           "path": "/root/.openclaw/workspace/BOOTSTRAP.md",
-          "missing": true,
-          "rawChars": 0,
-          "injectedChars": 0,
+          "missing": false,
+          "rawChars": 1510,
+          "injectedChars": 1510,
           "truncated": false
         }
       ],
@@ -152,7 +152,7 @@
       },
       "tools": {
         "listChars": 0,
-        "schemaChars": 16758,
+        "schemaChars": 16416,
         "entries": [
           {
             "name": "read",
@@ -251,12 +251,6 @@
             "propertiesCount": 3
           },
           {
-            "name": "image",
-            "summaryChars": 260,
-            "schemaChars": 342,
-            "propertiesCount": 6
-          },
-          {
             "name": "memory_search",
             "summaryChars": 605,
             "schemaChars": 237,
@@ -271,12 +265,10 @@
         ]
       }
     },
-    "cacheRead": 8121,
+    "cacheRead": 0,
     "cacheWrite": 0,
     "totalTokensFresh": true,
     "compactionCount": 0,
-    "endedAt": 1778357707097,
-    "runtimeMs": 43772,
     "skillsSnapshot": {
       "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>browser-automation</name>\n    <description>Use when controlling web pages with the OpenClaw browser tool, especially multi-step flows, login checks, tab management, or recovery from stale refs/timeouts.</description>\n    <location>~/.openclaw/plugin-skills/browser-automation/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Audit and harden hosts running OpenClaw for SSH, firewall, updates, exposure, cron checks, and risk posture.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/healthcheck/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/node-connect/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Create, edit, improve, tidy, review, audit, or restructure AgentSkills and SKILL.md files.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/skill-creator/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow</name>\n    <description>Coordinate multi-step detached tasks as one durable TaskFlow job with owner context, state, waits, and child tasks.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/taskflow/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow-inbox-triage</name>\n    <description>Example TaskFlow pattern for inbox triage, intent routing, waiting on replies, and later summaries.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/taskflow-inbox-triage/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tavily</name>\n    <description>Tavily web search, content extraction, and research tools.</description>\n    <location>~/.openclaw/plugin-skills/tavily/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather, rain, temperature, and forecasts for locations or travel planning.</description>\n    <location>/usr/lib/node_modules/openclaw/skills/weather/SKILL.md</location>\n  </skill>\n</available_skills>",
       "skills": [
@@ -310,14 +302,13 @@
       "version": 0
     },
     "contextTokens": 1000000,
-    "inputTokens": 66438,
-    "outputTokens": 1920,
-    "estimatedCostUsd": 0,
-    "totalTokens": 17252
+    "inputTokens": 16750,
+    "outputTokens": 395,
+    "totalTokens": 16750
   },
   "agent:main:main": {
     "sessionId": "6b134fe3-af0a-4028-8ed2-4ffc890444db",
-    "updatedAt": 1778360509019,
+    "updatedAt": 1778427109035,
     "sessionStartedAt": 1778356908978,
     "systemSent": true,
     "abortedLastRun": false,
@@ -609,8 +600,8 @@
     "pendingFinalDelivery": true,
     "pendingFinalDeliveryText": "HEARTBEAT_OK",
     "pendingFinalDeliveryCreatedAt": 1778356911554,
-    "pendingFinalDeliveryLastAttemptAt": 1778360509009,
-    "pendingFinalDeliveryAttemptCount": 1,
+    "pendingFinalDeliveryLastAttemptAt": 1778427109016,
+    "pendingFinalDeliveryAttemptCount": 2,
     "pendingFinalDeliveryLastError": null
   }
 }
