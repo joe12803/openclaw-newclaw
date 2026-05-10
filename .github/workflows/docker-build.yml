@@ -46,7 +46,17 @@ jobs:
 
       - name: Install OpenClaw on Runner
         run: |
-          curl -fsSL https://openclaw.ai/install.sh | bash || echo "OpenClaw install script finished (or skipped)"
+          echo "Installing OpenClaw..."
+          # 修改点：使用非交互模式避免 /dev/tty 错误
+          curl -fsSL https://openclaw.ai/install.sh | bash -s -- --yes </dev/null
+          if [ $? -ne 0 ]; then
+            echo "OpenClaw installation failed, but continuing as this may be optional."
+          else
+            echo "OpenClaw installed successfully."
+            # 确保 openclaw 命令在 PATH 中（如果脚本没设置）
+            export PATH="$HOME/.npm-global/bin:$PATH"
+            openclaw --version || true
+          fi
 
       - name: Start JupyterLab, Tunnel and Auto-Sync
         env:
@@ -83,7 +93,7 @@ jobs:
 
           chmod +x /tmp/openclaw_loop_sync.sh
 
-          echo "Starting auto-commit loop (every 5 minutes) using openclaw_loop_sync.sh..."
+          echo "Starting auto-commit loop (every 5 minutes)..."
           /tmp/openclaw_loop_sync.sh &
 
           echo "Installing cloudflared..."
@@ -126,4 +136,4 @@ jobs:
           fi
 
           # 停止后台循环脚本
-          kill %1
+          kill %1 || true
