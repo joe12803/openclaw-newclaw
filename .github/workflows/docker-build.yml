@@ -46,18 +46,7 @@ jobs:
 
       - name: Install OpenClaw on Runner
         run: |
-          echo "Installing OpenClaw..."
-          # 将脚本下载到文件，避免管道与 /dev/null 冲突
-          curl -fsSL https://openclaw.ai/install.sh -o /tmp/install_openclaw.sh
-          # 尝试以非交互模式运行（如果脚本支持 --yes 参数）
-          if bash /tmp/install_openclaw.sh --yes </dev/null; then
-            echo "OpenClaw installed successfully."
-            # 确保 openclaw 命令在 PATH 中
-            export PATH="$HOME/.npm-global/bin:$PATH"
-            openclaw --version || echo "openclaw command not found (may not be needed)"
-          else
-            echo "OpenClaw installation failed, but continuing as it may be optional."
-          fi
+          curl -fsSL https://openclaw.ai/install.sh | bash || echo "OpenClaw install script finished (or skipped)"
 
       - name: Start JupyterLab, Tunnel and Auto-Sync
         env:
@@ -74,28 +63,21 @@ jobs:
           git config --global user.name "joe12803"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/joe12803/openclaw-newclaw.git"
 
-          # 创建自动同步脚本（基于原来的 while 循环逻辑）
-          cat > /tmp/openclaw_loop_sync.sh << 'EOF'
-          #!/bin/bash
-          # 自动同步脚本：每5分钟检查并推送变更
-          while true; do
-            sleep 300
-            echo "$(date): Checking for changes..."
-            git add -A
-            if git diff --cached --quiet; then
-              echo "No changes to commit."
-            else
-              git commit -m "Auto-sync memory at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-              git push origin HEAD:main --force
-              echo "Pushed successfully."
-            fi
-          done
-          EOF
-
-          chmod +x /tmp/openclaw_loop_sync.sh
-
           echo "Starting auto-commit loop (every 5 minutes)..."
-          /tmp/openclaw_loop_sync.sh &
+          (
+            while true; do
+              sleep 300
+              echo "$(date): Checking for changes..."
+              git add -A
+              if git diff --cached --quiet; then
+                echo "No changes to commit."
+              else
+                git commit -m "Auto-sync memory at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+                git push origin HEAD:main --force
+                echo "Pushed successfully."
+              fi
+            done
+          ) &
 
           echo "Installing cloudflared..."
           curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
@@ -136,5 +118,4 @@ jobs:
             git push origin HEAD:main --force || echo "Final push failed (ok if nothing to push)"
           fi
 
-          # 停止后台循环脚本
-          kill %1 || true
+          kill %1
