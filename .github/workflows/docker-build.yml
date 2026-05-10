@@ -47,15 +47,16 @@ jobs:
       - name: Install OpenClaw on Runner
         run: |
           echo "Installing OpenClaw..."
-          # 修改点：使用非交互模式避免 /dev/tty 错误
-          curl -fsSL https://openclaw.ai/install.sh | bash -s -- --yes </dev/null
-          if [ $? -ne 0 ]; then
-            echo "OpenClaw installation failed, but continuing as this may be optional."
-          else
+          # 将脚本下载到文件，避免管道与 /dev/null 冲突
+          curl -fsSL https://openclaw.ai/install.sh -o /tmp/install_openclaw.sh
+          # 尝试以非交互模式运行（如果脚本支持 --yes 参数）
+          if bash /tmp/install_openclaw.sh --yes </dev/null; then
             echo "OpenClaw installed successfully."
-            # 确保 openclaw 命令在 PATH 中（如果脚本没设置）
+            # 确保 openclaw 命令在 PATH 中
             export PATH="$HOME/.npm-global/bin:$PATH"
-            openclaw --version || true
+            openclaw --version || echo "openclaw command not found (may not be needed)"
+          else
+            echo "OpenClaw installation failed, but continuing as it may be optional."
           fi
 
       - name: Start JupyterLab, Tunnel and Auto-Sync
